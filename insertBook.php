@@ -1,21 +1,13 @@
 <?php
-    require_once "dbconnect.php";
-    $sql ="select * from customer 
-    where income >=30000
-    order by income desc limit 20";
-
-    try{
-
-    $stmt = $conn->query($sql);
-    $status  = $stmt->execute();
-    
-    if ($status) //if execution is successful
-    {
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-    }
-
-    }catch(PDOException $e)
+    require_once"dbconnect.php";
+    try
+        {
+            $sql ="select * from category";
+            $stmt = $conn->query($sql);
+            $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            //Print_r($categories); 
+        }
+    catch(PDOException $e)
         {
             echo $e->getMessage();
         }
@@ -26,7 +18,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
+    <title>Insert Book</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   </head>
 
@@ -44,7 +36,10 @@
       
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
+            <a class="nav-link"  href="#">Home</a>
+            <a class="nav-link" href="#">Features</a>
+            <a class="nav-link" href="#">Pricing</a>
+            <a class="nav-link" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
         </li>
 
         <li class="nav-item">
@@ -78,46 +73,49 @@
   </div>
 </nav>
   <div class="container-fluid bg-light">
+
         <div class="row">
-            <div class="col-md-3 border" style="background-color: rgb(255, 246, 227);">
+
+            <div class="col-md-2 col-sm-12 border" style="background-color:#ebd9fa">
                 Some Links
             </div>
+
             <div class="col-md-9 pt-5">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <a href="insertBook.php">Add new Book</a>
-                            <th>ID</th>
-                            <th>Gender</th>
-                            <th>Income</th>
-                            <th>Marital Status</th>
-                            <th>Vehicles</th>
-                            <th>Age</th>
-                            <th>State</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        if(isset(($rows)))
-                        {
-                            foreach($rows as $row)
-                            {
-                                echo "<tr>
-                                    <td>$row[custid]</td>
-                                    <td>$row[sex]</td>
-                                    <td>$row[income]</td>
-                                    <td>$row[marital_stat]</td>
-                                    <td>$row[num_vehicles]</td>
-                                    <td>$row[age]</td>
-                                    <td>$row[stat]</td>
-                                </tr>";
-                            }
-                        }
-                        ?>
+                <a href="insertBook.php">Add new Book</a>
+            
+                <form>
+                    <div class="col-lg-6 mb-3">
+                        <label for="title" class="form-label">Title</label>
+                        <input type="text" class="form-control" name="title">    
+                    </div>
 
-                    </tbody>
+                    <div class="col-lg-6 mb-3">
+                        <label for="price" class="form-label">Price</label>
+                        <input type="number" class="form-control" name="price">    
+                    </div>
 
-                </table>
+                    <div class="col-lg-6 mb-3">
+                        <label for="quantity" class="form-label">Quantity</label>
+                        <input type="number" class="form-control" name="quantity">    
+                    </div>
+
+                    <select class="form-select" name="category">
+                            <option selected>Choose Category</option>
+                            <?php if(isset($categories))
+                                {
+                                    foreach($categories as $category)
+                                    {
+                                        echo  "<option value=$category[category_id]>
+                                            $category[category_name]</option>";
+                                    }
+                                
+                                }
+                            ?>
+                    </select>
+                    
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+                            
             </div>
 
         </div>
