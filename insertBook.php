@@ -1,16 +1,60 @@
 <?php
-    require_once"dbconnect.php";
-    try
-        {
-            $sql ="select * from category";
-            $stmt = $conn->query($sql);
-            $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            //Print_r($categories); 
-        }
-    catch(PDOException $e)
-        {
+    require_once "dbconnect.php";
+    try{
+        $sql = "select * from category";
+        $stmt = $conn->query($sql);
+        $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        //print_r($categories); check query work
+
+        $sql = "select * from publisher";
+        $stmt = $conn->query($sql);
+        $publishers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $sql = "select * from author";
+        $stmt = $conn->query($sql);
+        $authors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    }catch(PDOException $e){
+        echo $e->getMessage();  
+
+    }
+
+    if(isset($_POST['insert'])){
+
+        $title = $_POST["title"];
+        $price = $_POST["price"];
+        $quantity = $_POST["quantity"];
+        $year = $_POST["year"];
+        $publisher = $_POST["publisher"];
+        $category = $_POST["category"];
+        $author = $_POST["author"];
+        $filename = $_FILES['bookcover']['name'];
+        // store images
+        $uploadPath = "covers/".$filename; 
+        
+        //store uploaded files to destinated server in a specificed folder 
+        move_uploaded_file($_FILES["bookcover"]["tmp_name"], $uploadPath);
+
+        try{
+
+            $sql = "insert into book (title, author, price, publisher, year, category, coverpath, quantity) values (?,?,?,?,?,?,?,?)";
+
+            $stmt = $conn->prepare($sql);
+            $status = $stmt->execute([$title, $author, $price, $publisher, $year, $category, $uploadPath, $quantity]);
+
+            if($status){
+                //header("Location:viewBook.php");
+                echo "insert success!!!";
+            }
+
+        }catch(PDOException $e){
+
             echo $e->getMessage();
         }
+    }
+  
+
+
 ?>
 
 <!doctype html>
@@ -35,34 +79,36 @@
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-            <a class="nav-link"  href="#">Home</a>
-            <a class="nav-link" href="#">Features</a>
-            <a class="nav-link" href="#">Pricing</a>
-            <a class="nav-link" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-        </li>
+            <li class="nav-item">
+                <a class="nav-link"  href="#">Home</a>
+            </li>
 
-        <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
-        </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Features</a>
+            </li>
 
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Dropdown
-          </a>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Pricing</a>
+            </li>
+                
 
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-          </ul>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Dropdown </a>
+            
 
-        </li>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                </ul>
 
-        <li class="nav-item">
-          <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-        </li>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+            </li>
       </ul>
       
       <form class="d-flex" role="search">
@@ -74,46 +120,109 @@
 </nav>
   <div class="container-fluid bg-light">
 
-        <div class="row">
+        <div class="row pt-5 border" style ="background-color:#ebd9fa">
 
-            <div class="col-md-2 col-sm-12 border" style="background-color:#ebd9fa">
-                Some Links
+            <div class="col-md-2 col-sm-12 border">
+                <div class ="navbar-nav ps-3">
+                    <a class="nav-link"  href="viewBook.php">View Books</a>
+                    <a class="nav-link" href="viewAuthor.php">View Authors</a>
+                    <a class="nav-link" href="viewPublisher.php">View Publishers</a>
+                    <a class="nav-link" href="#" tabindex="-1" aria-disabled="true">another</a>
+                </div>
             </div>
 
-            <div class="col-md-9 pt-5">
-                <a href="insertBook.php">Add new Book</a>
+            <div class="col-md-10 col-sm-12 px-5">
+                <div calss="ph-3"><a href="insertBook.php" class="btn btn-outline-dark">Add new Book</a></div>
             
-                <form>
-                    <div class="col-lg-6 mb-3">
-                        <label for="title" class="form-label">Title</label>
-                        <input type="text" class="form-control" name="title">    
-                    </div>
+            <form method="post" action ="<?php $_SERVER['PHP_SELF']?>" enctype="multipart/form-data">
+                  <div class ="row">
 
-                    <div class="col-lg-6 mb-3">
-                        <label for="price" class="form-label">Price</label>
-                        <input type="number" class="form-control" name="price">    
-                    </div>
+                          <div class="col-lg-6 mb-3">
+                            <label for="title" class="form-label">Title</label>
+                            <input type="text" class="form-control" name="title">    
+                        </div>
 
-                    <div class="col-lg-6 mb-3">
-                        <label for="quantity" class="form-label">Quantity</label>
-                        <input type="number" class="form-control" name="quantity">    
-                    </div>
+                        <div class="col-lg-6 mb-3">
+                            <label for="price" class="form-label">Price</label>
+                            <input type="number" class="form-control" name="price">    
+                        </div>
+                  </div>
 
-                    <select class="form-select" name="category">
-                            <option selected>Choose Category</option>
-                            <?php if(isset($categories))
-                                {
-                                    foreach($categories as $category)
+                  <div class ="row">
+                        <div class="col-lg-6 mb-3">
+                            <label for="quantity" class="form-label">Quantity</label>
+                            <input type="number" class="form-control" name="quantity">    
+                        </div>
+                  
+                        <div class ="col-lg-6 mb3">
+                            <label for ="quantity" class="form-label">Category</label>
+                            <select class="form-select mb-3" name="category">
+                                <option selected>Choose Category</option>
+                                <?php if(isset($categories))
                                     {
-                                        echo  "<option value=$category[category_id]>
-                                            $category[category_name]</option>";
+                                        foreach($categories as $category)
+                                        {
+                                            echo  "<option value=$category[category_id]>
+                                                $category[category_name]</option>";
+                                        }
+                                    
                                     }
-                                
-                                }
-                            ?>
-                    </select>
+                                ?>
+                            </select> 
+                        </div>
+                    </div>
                     
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <div class ="row">
+                        <div class ="col-lg-6 mb3">
+                        <label for ="publisher" class="form-label">Publisher</label>
+                          <select class="form-select mb-3" name="publisher">
+                                <option selected>Choose Publisher</option>
+                                <?php if(isset($publishers))
+                                    {
+                                        foreach($publishers as $publisher)
+                                        {
+                                            echo  "<option value=$publisher[publisher_id]>
+                                                $publisher[publisher_name]</option>";
+                                        }
+                                    
+                                    }
+                                ?>
+                            </select>
+                        </div> 
+
+                        <div class ="col-lg-6 mb3">
+                          <label for ="author" class="form-label">Author</label>
+                            <select class="form-select mb-3" name="author">
+                                <option selected>Choose Author</option>
+                                <?php if(isset($authors))
+                                    {
+                                        foreach($authors as $author)
+                                        {
+                                            echo  "<option value=$author[author_id]>
+                                                $author[author_name]</option>";
+                                        }
+                                    
+                                    }
+                                ?>
+                            </select> 
+                        </div>
+                    </div>
+
+                    
+                    <div class ="row">
+                        <div class="col-lg-6 mb-3">
+                            <label for="year" class="form-label">Year</label>
+                            <input type="number" class="form-control" name="year">    
+                        </div>
+
+                        <div class="col-lg-6 mb-3">
+                            <label for="bookcover" class="form-label">Choose Book Cover</label>
+                            <input type="file" class="form-control" name="bookcover">    
+                        </div>
+                    </div>
+                    
+
+                    <button type="submit" class="btn btn-outline-dark" name="insert" >Submit</button>
                 </form>
                             
             </div>

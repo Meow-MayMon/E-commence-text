@@ -8,7 +8,7 @@ $dbname = "test";
 
 
     $conn = new PDO("mysql:host=$server;port=3306;dbname=$dbname", $user, $password);
-    echo "Connection got";
+    echo "";
 
 //$conn = new PDO(dsn: "mysql:host=$server;port=3306;dbname=$dbname", $user, $password);
 //echo "Connection got";
