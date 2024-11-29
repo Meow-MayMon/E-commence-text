@@ -1,10 +1,7 @@
 <?php
     require_once "dbconnect.php";
-    if(!isset($_SESSION))
+    try
     {
-        session_start();
-    }
-    try{
         $sql = "select * from category";
         $stmt = $conn->query($sql);
         $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -23,45 +20,46 @@
 
     }
 
-    if(isset($_POST['insert'])){
-
-        $title = $_POST["title"];
-        $price = $_POST["price"];
-        $quantity = $_POST["quantity"];
-        $year = $_POST["year"];
-        $publisher = $_POST["publisher"];
-        $category = $_POST["category"];
-        $author = $_POST["author"];
-        $filename = $_FILES['bookcover']['name'];
-        // store images
-        $uploadPath = "covers/".$filename; 
-        
-        //store uploaded files to destinated server in a specificed folder 
-        move_uploaded_file($_FILES["bookcover"]["tmp_name"], $uploadPath);
-
-        try{
-
-            $sql = "insert into book (title, author, price, publisher, year, category, coverpath, quantity) values (?,?,?,?,?,?,?,?)";
-
-            $stmt = $conn->prepare($sql);
-            $status = $stmt->execute([$title, $author, $price, $publisher, $year, $category, $uploadPath, $quantity]);
-
-            $book_id = $conn->lastInsertId();
-            if($status)
-            {
-                $_SESSION['insertSuccess']="Book with bookid has been inserted.";
-                header("Location:viewBook.php");
-                
-            }
-
-        }catch(PDOException $e){
-
-            echo $e->getMessage();
-        }
+    if(isset($_GET['bid']))
+    {
+        $bookid =$_GET['bid'];
+        $book = getBookInfo($bookid);
     }
-  
 
+    function getBookInfo($bid)
+    { global $conn;
+        $bookid=$_GET['bid'];
+        $sql= "select b.bookid, b.title, 
+            a.author_name as author, 
+            b.price, 
+            p.publisher_name as publisher, 
+            b.year, 
+            c.category_name as category, 
+            b.coverpath, 
+            b.quantity
+            from book b, category c, author a, publisher p 
+            where 
+            b.category = c.category_id AND
+            b.author = a.author_id and 
+            b.publisher = p.publisher_id and 
+            b.bookid=?"; 
 
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$bid]);
+        $book = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $book;
+    }
+
+    if(isset($_POST['update']))
+    {   
+        $book_id = $_POST['bookid'];
+    //created sql statment
+    $sql = "update book set title =?, price=?, year=?, category=?, publisher=?, author=?, quantity=?, coverpath=? 
+            where bookid=?";
+            
+    }
+
+        
 ?>
 
 <!doctype html>
@@ -69,7 +67,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Insert Book</title>
+    <title>Updated Book</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   </head>
 
@@ -83,9 +81,9 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
                 <a class="nav-link"  href="#">Home</a>
             </li>
@@ -119,6 +117,7 @@
       </ul>
       
       <form class="d-flex" role="search">
+        
         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Search</button>
       </form>
@@ -142,26 +141,45 @@
                 <div calss="ph-3"><a href="insertBook.php" class="btn btn-outline-dark">Add new Book</a></div>
             
             <form method="post" action ="<?php $_SERVER['PHP_SELF']?>" enctype="multipart/form-data">
-                  <div class ="row">
+                <input type="hidden" name ="bookid" value ="$book['bookid']">
 
+                  <div class ="row">
                           <div class="col-lg-6 mb-3">
                             <label for="title" class="form-label">Title</label>
-                            <input type="text" class="form-control" name="title">    
+                            <input type="text" class="form-control" name="title" 
+                             value ="<?php 
+                                if (isset($book['title']))
+                                echo $book['title'];?>
+                            ">    
                         </div>
 
                         <div class="col-lg-6 mb-3">
                             <label for="price" class="form-label">Price</label>
-                            <input type="number" class="form-control" name="price">    
+                            <input type="number" class="form-control" name="price"
+                            value ="<?php 
+                                if (isset($book['price'])){
+                                    echo $book['price'];
+                                }?>
+                            ">
                         </div>
                   </div>
 
                   <div class ="row">
                         <div class="col-lg-6 mb-3">
                             <label for="quantity" class="form-label">Quantity</label>
-                            <input type="number" class="form-control" name="quantity">    
+                            <input type="number" class="form-control" name="quantity"
+                            value ="<?php 
+                                if (isset($book['quantity'])){
+                                    echo $book['quantity'];
+                                }?>">    
                         </div>
                   
                         <div class ="col-lg-6 mb3">
+                            <?php 
+                                if (isset($book['category']))
+                                echo "You previously selected ".$book['category'];
+                            ?>
+                            
                             <label for ="quantity" class="form-label">Category</label>
                             <select class="form-select mb-3" name="category">
                                 <option selected>Choose Category</option>
@@ -181,6 +199,10 @@
                     
                     <div class ="row">
                         <div class ="col-lg-6 mb3">
+                            <?php 
+                                if (isset($book['publisher']))
+                                echo "You previously selected ".$book['publisher'];
+                            ?>
                         <label for ="publisher" class="form-label">Publisher</label>
                           <select class="form-select mb-3" name="publisher">
                                 <option selected>Choose Publisher</option>
@@ -198,6 +220,10 @@
                         </div> 
 
                         <div class ="col-lg-6 mb3">
+                            <?php 
+                                if (isset($book['author']))
+                                echo "You previously selected".$book['author'];
+                            ?>
                           <label for ="author" class="form-label">Author</label>
                             <select class="form-select mb-3" name="author">
                                 <option selected>Choose Author</option>
@@ -219,17 +245,23 @@
                     <div class ="row">
                         <div class="col-lg-6 mb-3">
                             <label for="year" class="form-label">Year</label>
-                            <input type="number" class="form-control" name="year">    
+                            <input type="number" class="form-control" name="year"
+                            value ="<?php 
+                                if (isset($book['year'])){
+                                echo $book['year'];
+                                }?>">      
                         </div>
 
                         <div class="col-lg-6 mb-3">
+                            <p>Previous image</p>
+                            <img style ="width:70px; height:50px;" src="<?php if(isset($book['coverpath'])) echo $book['coverpath'];?>">
                             <label for="bookcover" class="form-label">Choose Book Cover</label>
-                            <input type="file" class="form-control" name="bookcover">    
+                            <input type="file" class="form-control border" name="bookcover">          
                         </div>
                     </div>
                     
 
-                    <button type="submit" class="btn btn-outline-dark" name="insert" >Submit</button>
+                    <button type="submit" class="btn btn-outline-dark" name="update" >Update</button>
                 </form>
                             
             </div>
