@@ -71,17 +71,19 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
     <style>
+        nav.navbar {
+            background-color: rgb(51, 155, 200);
+            height: 70px; /* Adjust this value for desired height */
+            padding: 15px 20px; /* Add padding for spacing */
+        }
+
         body {
         margin: 0;
         padding: 0;
         background-color: #ebd9fa;
         }
 
-        .container-fluid {
-        margin: 0%;
-        padding: 0%;
-        }
-
+    
         .sidebar {
         height: 100vh; /* Full viewport height */
         background-color:rgb(191, 133, 225); /* Sidebar background */

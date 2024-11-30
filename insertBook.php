@@ -73,35 +73,43 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   
   <style>
+
+        nav.navbar {
+            background-color: rgb(51, 155, 200);
+            height: 70px; /* Adjust this value for desired height */
+            padding: 15px 20px; /* Add padding for spacing */
+        }
+        
         body {
         margin: 0;
         padding: 0;
-        background-color: #ebd9fa;
+        background-color:rgb(171, 121, 211);
+        
+
         }
 
-        .container-fluid {
-        margin: 0%;
-        padding: 0%;
-        }
-
+        
         .sidebar {
-        height: 100vh; /* Full viewport height */
-        background-color:rgb(191, 133, 225); /* Sidebar background */
+        height: 90vh; /* Full viewport height */
+        background-color:rgb(214, 171, 239); /* Sidebar background */
         padding-top: 40px;
         }
 
         .sidebar a {
-        color: #000;
+        
+        color:rgb(15, 135, 131);
         text-decoration: none;
         display: block;
-        padding: 10px 15px;
+        padding: 20px 30px;
         }
 
         .sidebar a:hover {
-        background-color: #d9c4ee;
+        background-color:rgb(77, 82, 232);
+        
         }
 
         .content {
+        
         padding-top: 60px;
         padding-left: 10px;
         padding-bottom: 60px;
@@ -111,7 +119,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg" style="background-color:rgb(51, 155, 200);">
+    <nav class="navbar navbar-expand-lg" style="background-color:rgb(6, 165, 233);">
       <div class="container-fluid">
         <a class="navbar-brand" href="#"><img src="./images/stack-of-books.png" alt="" style="width: 70%; height: auto;">
           Batch 100 Book Store 
