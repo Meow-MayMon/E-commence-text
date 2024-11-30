@@ -66,17 +66,54 @@
 
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Insert Book</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  </head>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Insert Book</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  
+  <style>
+        body {
+        margin: 0;
+        padding: 0;
+        background-color: #ebd9fa;
+        }
 
-  <body>
-    <nav class="navbar navbar-expand-lg" style="background-color: #BFECFF;">
+        .container-fluid {
+        margin: 0%;
+        padding: 0%;
+        }
+
+        .sidebar {
+        height: 100vh; /* Full viewport height */
+        background-color:rgb(191, 133, 225); /* Sidebar background */
+        padding-top: 40px;
+        }
+
+        .sidebar a {
+        color: #000;
+        text-decoration: none;
+        display: block;
+        padding: 10px 15px;
+        }
+
+        .sidebar a:hover {
+        background-color: #d9c4ee;
+        }
+
+        .content {
+        padding-top: 60px;
+        padding-left: 10px;
+        padding-bottom: 60px;
+      
+        }
+  </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg" style="background-color:rgb(51, 155, 200);">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#"><img src="./images/stack-of-books.png" alt="" style="width: 10%; height: auto;">
+        <a class="navbar-brand" href="#"><img src="./images/stack-of-books.png" alt="" style="width: 70%; height: auto;">
           Batch 100 Book Store 
         </a>
         
@@ -125,11 +162,12 @@
     </div>
   </div>
 </nav>
-  <div class="container-fluid bg-light">
 
-        <div class="row pt-5 border" style ="background-color:#ebd9fa">
+  <div class="container-fluid">
 
-            <div class="col-md-2 col-sm-12 border">
+        <div class="row">
+            <!-- Sidebar -->
+           <div class="col-md-2 sidebar">
                 <div class ="navbar-nav ps-3">
                     <a class="nav-link"  href="viewBook.php">View Books</a>
                     <a class="nav-link" href="viewAuthor.php">View Authors</a>
@@ -138,30 +176,32 @@
                 </div>
             </div>
 
-            <div class="col-md-10 col-sm-12 px-5">
+
+            <!-- Main Content --> 
+            <div class="col-md-10 content"> <!--<div class="col-md-10 col-sm-12 px-5"> -->
                 <div calss="ph-3"><a href="insertBook.php" class="btn btn-outline-dark">Add new Book</a></div>
             
             <form method="post" action ="<?php $_SERVER['PHP_SELF']?>" enctype="multipart/form-data">
-                  <div class ="row">
+                  <div class ="row mb-3">
 
-                          <div class="col-lg-6 mb-3">
+                          <div class="col-lg-6">
                             <label for="title" class="form-label">Title</label>
                             <input type="text" class="form-control" name="title">    
                         </div>
 
-                        <div class="col-lg-6 mb-3">
+                        <div class="col-lg-6">
                             <label for="price" class="form-label">Price</label>
                             <input type="number" class="form-control" name="price">    
                         </div>
                   </div>
 
-                  <div class ="row">
-                        <div class="col-lg-6 mb-3">
+                  <div class ="row mb-3">
+                        <div class="col-lg-6">
                             <label for="quantity" class="form-label">Quantity</label>
                             <input type="number" class="form-control" name="quantity">    
                         </div>
                   
-                        <div class ="col-lg-6 mb3">
+                        <div class ="col-lg-6">
                             <label for ="quantity" class="form-label">Category</label>
                             <select class="form-select mb-3" name="category">
                                 <option selected>Choose Category</option>
@@ -179,8 +219,8 @@
                         </div>
                     </div>
                     
-                    <div class ="row">
-                        <div class ="col-lg-6 mb3">
+                    <div class ="row mb-3">
+                        <div class ="col-lg-6">
                         <label for ="publisher" class="form-label">Publisher</label>
                           <select class="form-select mb-3" name="publisher">
                                 <option selected>Choose Publisher</option>
@@ -197,7 +237,7 @@
                             </select>
                         </div> 
 
-                        <div class ="col-lg-6 mb3">
+                        <div class ="col-lg-6">
                           <label for ="author" class="form-label">Author</label>
                             <select class="form-select mb-3" name="author">
                                 <option selected>Choose Author</option>
@@ -216,13 +256,13 @@
                     </div>
 
                     
-                    <div class ="row">
-                        <div class="col-lg-6 mb-3">
+                    <div class ="row mb-3">
+                        <div class="col-lg-6">
                             <label for="year" class="form-label">Year</label>
                             <input type="number" class="form-control" name="year">    
                         </div>
 
-                        <div class="col-lg-6 mb-3">
+                        <div class="col-lg-6">
                             <label for="bookcover" class="form-label">Choose Book Cover</label>
                             <input type="file" class="form-control" name="bookcover">    
                         </div>
