@@ -1,5 +1,10 @@
 <?php
     require_once "dbconnect.php";
+    if(!isset($_SESSION))
+    {
+        session_start();
+    }
+
     try
     {
         $sql = "select * from category";
@@ -15,7 +20,9 @@
         $stmt = $conn->query($sql);
         $authors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    }catch(PDOException $e){
+    }catch(PDOException $e)
+
+    {
         echo $e->getMessage();  
 
     }
@@ -27,7 +34,8 @@
     }
 
     function getBookInfo($bid)
-    { global $conn;
+    { 
+        global $conn;
         $bookid=$_GET['bid'];
         $sql= "select b.bookid, b.title, 
             a.author_name as author, 
@@ -51,15 +59,48 @@
     }
 
     if(isset($_POST['update']))
-    {   
+    {  echo "in post update php";
+
         $book_id = $_POST['bookid'];
-    //created sql statment
-    $sql = "update book set title =?, price=?, year=?, category=?, publisher=?, author=?, quantity=?, coverpath=? 
-            where bookid=?";
-            
+        $title = $_POST['title'];
+        $price = $_POST["price"];
+        $quantity = $_POST["quantity"];
+        $year = $_POST["year"];
+        $publisher = $_POST["publisher"];
+        $category = $_POST["category"];
+        $author = $_POST["author"];
+        $filename = $_FILES['bookcover']['name'];
+        // store images
+        $uploadPath = "covers/".$filename; 
+        //created sql statment
+        echo "$book_id, $title, $price, $quantity, $year, $publisher, $category, $author, $filename <br>";
+
+        //store uploaded files to destinated server in a specificed folder 
+        move_uploaded_file($_FILES['bookcover']['tmp_name'], $uploadPath);
+    
+
+    try 
+    {
+        $sql = "update book set title =?, price=?, year=?, category=?, publisher=?, author=?, quantity=?, coverpath=? 
+        where bookid=?";
+        $stmt = $conn->prepare($sql);
+        $status = $stmt->execute([$title, $price, $year, $category, $publisher, $author, $quantity, $uploadPath, $book_id]);
+
+        if($status)
+        {
+            $_SESSION['updateBookSuccess'] = "Book with id no $book_id has been updated.";
+            header("Location:viewBook.php");
+        }
+
+    }catch (PDOException $e)
+    
+    {
+     echo $e->getMessage();       
+    
+
     }
 
-        
+}
 ?>
 
 <!doctype html>
@@ -180,8 +221,12 @@
             <div class="col-md-10 content"> <!--<div class="col-md-10 col-sm-12 px-5"> -->
                 <div calss="ph-3"><a href="insertBook.php" class="btn btn-outline-dark">Add new Book</a></div>
             
-            <form method="post" action ="<?php $_SERVER['PHP_SELF']?>" enctype="multipart/form-data">
-                <input type="hidden" name ="bookid" value ="$book['bookid']">
+            <form method="post" action ="<?php $_SERVER['PHP_SELF'] ?>" enctype="multipart/form-data">
+                <input type="hidden" name ="bookid" value ="
+                <?php 
+                    if (isset($book['bookid'])) 
+                    echo $book['bookid']; ?>
+                ">
 
                   <div class ="row mb-3">
                           <div class="col-lg-6">
@@ -189,7 +234,8 @@
                             <input type="text" class="form-control" name="title" 
                              value ="<?php 
                                 if (isset($book['title']))
-                                echo $book['title'];?>
+                                echo $book['title'];
+                            ?>
                             ">    
                         </div>
 
@@ -199,7 +245,8 @@
                             value ="<?php 
                                 if (isset($book['price'])){
                                     echo $book['price'];
-                                }?>
+                                }
+                                ?>
                             ">
                         </div>
                   </div>
