@@ -216,7 +216,7 @@
             <!--    <div calss="ph-3"><a href="insertBook.php" class="btn btn-outline-dark">Add new Book</a></div> -->
             
             <form method="post" action ="<?php $_SERVER['PHP_SELF']?>" enctype="multipart/form-data">
-                  
+                  <div class ="row mb-3">
 
                           <div class="col-lg-6">
                             <label for="name" class="form-label">Name</label>
@@ -227,17 +227,10 @@
                             <label for="email" class="form-label">Email</label>
                             <input type="email" class="form-control" name="email">    
                         </div>
-                  
+                  </div>
 
+                  <div class ="row mb-3">
                         <div class="col-lg-6">
-                            <p>
-                                <?php
-                                    if(isset($password_err)){
-                                        echo "<span class = 'alert alert-danger'> $password_err </span>";
-                                        unset($password_err);
-                                    }
-                                ?>
-                            </p>
                             <label for="cpassword" class="form-label">Password</label>
                             <input type="password" class="form-control" name="cpassword">    
                         </div>
@@ -246,10 +239,11 @@
                             <label for="password" class="form-label">Confirm Password</label>
                             <input type="password" class="form-control" name="password">    
                         </div>
-              
+                </div>
                   
                         
-                    
+                    <div class ="row mb-3">
+
                         <div class ="col-lg-6">
                             <label for="phone" class="form-label">Phone</label>
                             <input type="phone" class="form-control" name="phone">   
@@ -261,7 +255,7 @@
                             <input type="file" class="form-control" name="profile">    
                         </div> 
 
-                    
+                    </div>
 
     
                     <button type="submit" class="btn btn-outline-dark" name="signup" >Sign Up</button>
