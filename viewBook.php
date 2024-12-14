@@ -5,6 +5,12 @@
       session_start();
     }
 
+    if($_SESSION['isLogginedIn'])
+  {
+    session_destroy();
+    header("Location:adminLogin.php");
+  }
+
     $sql ="select b.bookid, b.title, 
             a.author_name as author, 
             b.price, 
