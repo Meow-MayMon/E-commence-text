@@ -23,5 +23,12 @@
 
 -- alter table customer2
 -- add column (profile varchar(70));
+-- add CONSTRAINT email_constraint unique (email);
+
+-- adminLogout.php
+-- CREATE TABLE admin
+-- (email VARCHAR(30) unique,
+-- password VARCHAR(60));
+
 
 DESCRIBE customer2;

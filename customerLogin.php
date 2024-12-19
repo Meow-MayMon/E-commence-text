@@ -1,101 +1,42 @@
 <?php
     require_once "dbconnect.php";
-    if(!isset($_SESSION))
-    {
+
+    if(!isset($_SESSION)){
         session_start();
     }
-    
-    if(!isset($_SESSION)){
-        session_start(); // to create session if not exist
-    }
-    
-    function ispasswordstrong($password) {
-        if(strlen($password) < 8){
-            return false;
-        }elseif(isstrong($password)){
-            return true;
-        }
-    }
-    
-    function isstrong($password){
-        $digitcount = 0;
-        $capitalcount = 0;
-        $speccount = 0;
-        $lowercount = 0;
-        foreach(str_split($password) as $char){
-            if(is_numeric($char)){
-                $digitcount++;
-            }elseif(ctype_upper($char)){
-                $capitalcount++;
-            }elseif(ctype_lower($char)){
-                $lowercount++;
-            }elseif(ctype_punct($char)){
-                $speccount++;
+
+if (isset($_POST['login']) && $_SERVER['REQUEST_METHOD'] == "POST") {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    if (strlen($password) > 7) {
+        try {
+            $sql = "SELECT password from customer2 where email = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([$email]);
+            $info = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($info) {
+                $password_hash = $info["password"];
+                
+                if (password_verify($password, $password_hash)) {
+                    $_SESSION['cloginSuccess'] = "Login Success";
+                    $_SESSION['cemail'] = $email;
+                    $_SESSION['is_logged_in'] = true;
+                    header("Location: viewCustomerBooks.php");
+                } else {
+                    $password_err = "Email or password does not exist";
+                }
+            } else {
+                $password_err = "Email or password does not exist";
             }
-        }
-    
-        if($digitcount >= 1 && $capitalcount >=1 && $speccount >= 1){
-            return true;
-        }else{
-            return false;
-        }
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+        } // end catch
+    } // str len if end
+    else {
+        $password_err = "Email or password might be wrong";
     }
-
-    if(isset($_POST['signup']) && $_SERVER['REQUEST_METHOD']=="POST")
-    {
-
-        $username = $_POST["name"];
-        $email = $_POST["email"];
-        $password = $_POST["password"];
-        $cpassword = $_POST["cpassword"];
-        $phone= $_POST["phone"];
-        $filename = $_FILES['profile']['name'];
-        // store images
-        $uploadPath = "profile/".$filename; 
-
-        if ($password == $cpassword)
-        { 
-            if(ispasswordstrong($password))
-            {
-                $password_hash = password_hash($password, PASSWORD_BCRYPT);
-                //store uploaded files to destinated server in a specificed folder 
-                move_uploaded_file($_FILES["profile"]["tmp_name"], $uploadPath);
-
-            try
-            {
-
-                $sql ="insert into customer2 (username, password, email, phone, profile)
-                 values (?, ? ,?, ? ,?)";
-                 $stmt = $conn->prepare($sql);
-                 $status = $stmt-> execute([$username, $password_hash, $email, $phone, $uploadPath]);
-
-                 if($status)
-                 { 
-                    $_SESSION['signupSuccess']="Signup Success!!";
-                    header("Location: customerLogin.php");
-                 }
-
-                }catch(PDOException $e)
-
-                    {
-                        echo $e-> getMessage();
-                    }
-                }
-            
-                else
-                {
-                    $password_err = "Password must contain at least one digit, one capital letter and one special char.";
-
-                }
-
-            }
-            else
-                {
-                    $password_err ="Password must be at least 8 char long";
-                }
-        
-    }
-
+}
 ?>
 
 <!doctype html>
@@ -107,49 +48,65 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   
   <style>
-
-        nav.navbar {
-            background-color: rgb(51, 155, 200);
-            height: 70px; /* Adjust this value for desired height */
-            padding: 15px 20px; /* Add padding for spacing */
-        }
-        
         body {
-        margin: 0;
-        padding: 0;
-        background-color:rgb(171, 121, 211);
-        
-
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
         }
 
-        
-        .sidebar {
-        height: 90vh; /* Full viewport height */
-        background-color:rgb(214, 171, 239); /* Sidebar background */
-        padding-top: 40px;
+        .login-container {
+            max-width: 450px;
+            margin: 50px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
         }
 
-        .sidebar a {
-        
-        color:rgb(15, 135, 131);
-        text-decoration: none;
-        display: block;
-        padding: 20px 30px;
+        .form-control {
+            border-radius: 25px;
         }
 
-        .sidebar a:hover {
-        background-color:rgb(77, 82, 232);
-        
+        .btn-primary {
+            border-radius: 25px;
+            background-color: #007bff;
+            border: none;
+            transition: background-color 0.3s ease;
         }
 
-        .content {
-        
-        padding-top: 60px;
-        padding-left: 10px;
-        padding-bottom: 60px;
-      
+        .btn-primary:hover {
+            background-color: #0056b3;
         }
-  </style>
+
+        .form-title {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            display: block;
+            margin: 0 auto 15px auto;
+            width: 80px;
+            height: auto;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+
+        .form-footer a {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 
 <body>
@@ -205,67 +162,43 @@
   </div>
 </nav>
 
-  <div class="container-fluid">
-    
+<div class="container-fluid">
+        <div class="row">
+            <div class="col-md-10">
+                <h4 class="p-20">Login</h4>
+                <!-- <a href="insertbook.php" class="text-decoration-none bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Add New Book</a> -->
+                <form method="POST" enctype="multipart/form-data" action="<?php $_SERVER['PHP_SELF'] ?>">
+                    <?php if (isset($password_err)) {
+                        echo "<span class='alert alert-danger'>$password_err</span>";
+                    } ?>
+                    <div class="mb-3 col-lg-4">
 
-            <div calss ="col-md-10 col-sm12 px-5">
-                <a><h4 class="bg-secondary text-center"> Sign Up </h4> </a>
-            </div>
-            <!-- Main Content --> 
-            <!--<div class="col-md-10 content"> <div class="col-md-10 col-sm-12 px-5"> -->
-            <!--    <div calss="ph-3"><a href="insertBook.php" class="btn btn-outline-dark">Add new Book</a></div> -->
-            
-            <form method="post" action ="<?php $_SERVER['PHP_SELF']?>" enctype="multipart/form-data">
-                  <div class ="row mb-3">
-
-                          <div class="col-lg-6">
-                            <label for="name" class="form-label">Name</label>
-                            <input type="text" class="form-control" name="name">    
-                        </div>
-
-                        <div class="col-lg-6">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" name="email">    
-                        </div>
-                  </div>
-
-                  <div class ="row mb-3">
-                        <div class="col-lg-6">
-                            <label for="cpassword" class="form-label">Password</label>
-                            <input type="password" class="form-control" name="cpassword">    
-                        </div>
-
-                        <div class="col-lg-6">
-                            <label for="password" class="form-label">Confirm Password</label>
-                            <input type="password" class="form-control" name="password">    
-                        </div>
-                </div>
-                  
-                        
-                    <div class ="row mb-3">
-
-                        <div class ="col-lg-6">
-                            <label for="phone" class="form-label">Phone</label>
-                            <input type="phone" class="form-control" name="phone">   
-
-                        </div>
-
-                        <div class ="col-lg-6">
-                            <label for="profile" class="form-label">Select Your Profile Photo</label>
-                            <input type="file" class="form-control" name="profile">    
-                        </div> 
-
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email">
                     </div>
-
-    
-                    <button type="submit" class="btn btn-outline-dark" name="signup" >Sign Up</button>
-                </form>
-                            
             </div>
 
-        </div>
+            <div class="row">
+                <div class="mb-3 col-lg-4">
 
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" name="password">
+                </div>
+
+                <button type="submit" name="login" class="btn btn-primary text-sm">Login</button>
+                <p>
+                    If you are not a member, you can
+                    <a href="customerSignup.php">
+                        Sign Up
+                    </a>
+                    here
+                </p>
+                </form>
+            </div>
+        </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-  </body>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+
 </html>

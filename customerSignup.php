@@ -50,6 +50,7 @@
         $cpassword = $_POST["cpassword"];
         $phone= $_POST["phone"];
         $filename = $_FILES['profile']['name'];
+        
         // store images
         $uploadPath = "profile/".$filename; 
 
@@ -71,8 +72,8 @@
 
                  if($status)
                  { 
-                    $_SESSION['signupSuccess']="Signup Success!!";
-                    header("Location: customerLogin.php");
+                    $_SESSION['Success']="Signup Success!!";
+                    header("Location: viewCustomverBook.php");
                  }
 
                 }catch(PDOException $e)
