@@ -1,4 +1,4 @@
-<?php
+<p?php
     require_once "dbconnect.php";
     if(!isset($_SESSION))
     {
@@ -290,14 +290,15 @@
             </li>
                 
 
-            <li class="nav-item dropdown">
-                <?php if(isset($_SESSION['adminLoginSuccess']))
+            <li class="nav-item">
+                <?php if(isset($_SESSION['is_logged_in']))
                   {
 
                 ?>
-                <li class="nav-item">
-                <a class="nav-link" href="adminLogout.php">Logout</a>
+                <a class="nav-link" href="cLogout.php">Logout</a>
+                <p class="text-link"><?php echo $_SESSION['cemail']; ?></p>
             </li>
+
               <?php 
               }
             ?>
@@ -333,56 +334,29 @@
             <!-- Sidebar -->
            <div class="col-md-2 sidebar">
                 <div class ="navbar-nav ps-3">
-                    <a class="nav-link"  href="viewCustomerbook.php">View Books</a>
-                    <a class="nav-link" href="viewAuthor.php">View Authors</a>
-                    <a class="nav-link" href="viewPublisher.php">View Publishers</a>
+                    <a class="nav-link"  href="viewCustomerbook.php">View Customer Books</a>
                     <a class="nav-link" href="#" tabindex="-1" aria-disabled="true"></a>
 
-                    <form method="post" action="<?php echo $_SERVER['PHP_SELF']  ?>"> 
-                      <p class ="text-primary">Category</p>
-                        <select name="catgy" class= "mt-3 form-select">
-                          <?php
+                            <form method="post" action="<?php echo $_SERVER['PHP_SELF']  ?>"> 
+                              <p class ="text-primary">Category</p>
+                                <select name="catgy" class= "mt-3 form-select">
+                                  <?php
 
-                              foreach($categories as $category)
-                              {
-                                echo "<option value=$category[category_id]> $category[category_name]
-                                </option>";
-                              }
+                                      foreach($categories as $category)
+                                      {
+                                        echo "<option value=$category[category_id]> $category[category_name]
+                                        </option>";
+                                      }
 
-                          ?>
-                        </select>
-                        <button type="submit" class="btn btn-outline-primary" name="ctySearch">Search</button>
-                    </form>
+                                  ?>
+                                </select>
+                                <button type="submit" class="btn btn-outline-primary" name="ctySearch">Search</button>
+                            </form>
 
                    
-                    <form method="post" action="<?php echo $_SERVER['PHP_SELF']  ?>">
-                      <p class ="text-primary">Author</p>
-                          <select name="author" class= "mt-3 form-select">
-                            <?php
+                    
 
-                                foreach($authors as $author)
-                                {
-                                  echo "<option value=$author[author_id]> $author[author_name]
-                                  </option>";
-                                }
 
-                            ?>
-                          </select>
-                          <button type="submit" class="btn btn-outline-primary" name="auSearch">Search</button>
-                      </form>
-
-                      <form method="post" action="<?php echo $_SERVER['PHP_SELF']  ?>">
-                      <p class ="text-primary">Publisher</p>
-                          <select name="publisher" class= "mt-3 form-select">
-                            <?php
-
-                                foreach($publishers as $publisher)
-                                {
-                                  echo "<option value=$publisher[publisher_id]> $publisher[publisher_name]
-                                  </option>";
-                                }
-
-                            ?>
                           </select>
                           <button type="submit" class="btn btn-outline-primary" name="puSearch">Search</button>
                       </form>
@@ -431,20 +405,24 @@
                             echo "<div class=row>";
                             foreach($books as $book){
 
-                                echo "<div class=col-lg-3 col-md-6 col-sm-12>
+                                echo "
+                                <div class=col-lg-2 col-md-4 col-sm-12>
 
-                                <div class=card>
-                                    <img src=$book[coverpath] class=img-fluid card-img-top>
-                                    <div class=card-title>
-                                        $book[title]
+                                    <div class=card card-deck style=height:30rem width:30rem>
+                                        <img src=$book[coverpath] class=img-fluid card-img-top style=height:30rem width:30rem>
+                                            <div class=card-body>
+                                                <div class=card-title>
+                                                      $book[title]
+                                                </div>
+                                                      
+                                                  <div class=card-text>$book[price] &nbsp; &nbsp; $book[publisher]</div>
+                                                      <a class = btn btn-outline-primary> Add To Card </a>
+                                                      <a class = card-link>More..</a>
+                                            </div>
+
                                     </div>
 
-                                    <div class=card-text>$book[price] &nbsp; </div>
-                                    <div class=card-text>$book[publisher]</div>
-
-                                    </div>
-
-                                    </div>
+                                </div>
                                 
                                 
                                 
