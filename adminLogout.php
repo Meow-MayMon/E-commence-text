@@ -4,9 +4,9 @@
         session_start();
     }
 
-    if($_SESSION['is_logged_in']){
+    if($_SESSION['isLoggedIn']){
         session_destroy();
-        header("Location: customerlogin.php");
+        header("Location: adminLogin.php");
     }
 
 
