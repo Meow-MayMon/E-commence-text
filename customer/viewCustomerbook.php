@@ -419,55 +419,25 @@
             <div class="col-md-10 content"> <!--<div class="col-md-10 col-sm-12 px-5"> -->
                 <div calss="ph-3"><a href="insertBook.php" class="btn btn-outline-dark">Add new Book</a></div>
 
-                <p >
-                        <?php 
+              <p>
+                <?php 
+                  if(isset($_SESSION['cloginSuccess'])){
+                    echo "<span class='w-screen alert alert-success'>$_SESSION[cloginSuccess]</span> " ; 
+                    unset($_SESSION['cloginSuccess']);
+                }// if ends
 
-                        if(isset($_SESSION['cloginSuccess'])){
-                            echo "<span class='w-screen alert alert-success'>$_SESSION[cloginSuccess]</span> " ; 
-                            unset($_SESSION['cloginSuccess']);
-                        }// if ends
+                if(isset($books)){
+                    foreach($books as $book){
+            
+            
+                ?>
+                <?php }
 
-                        if(isset($books)){
-                            echo "<div class=row>";
-                            foreach($books as $book){
+              }
 
-                                echo "<div class=col-lg-3 col-md-6 col-sm-12>
+              ?>
 
-                                <div class=card>
-                                    <img src=$book[coverpath] class=img-fluid card-img-top>
-                                    <div class=card-title>
-                                        $book[title]
-                                    </div>
-
-                                    <div class=card-text>$book[price] &nbsp; </div>
-                                    <div class=card-text>$book[publisher]</div>
-
-                                    </div>
-
-                                    </div>
-                                
-                                
-                                
-                                
-                                "
-
-
-
-                                ?>
-
-                                
-                            
-
-
-                           <?php }
-
-                        }
-
-
-                        
-                        ?>
-
-                    </p>
+              </p>
 
                 
             </div>

@@ -333,7 +333,7 @@
             <!-- Sidebar -->
            <div class="col-md-2 sidebar">
                 <div class ="navbar-nav ps-3">
-                    <a class="nav-link"  href="viewCustomerbook.php">View Books</a>
+                    <a class="nav-link"  href="viewbook.php">View Books</a>
                     <a class="nav-link" href="viewAuthor.php">View Authors</a>
                     <a class="nav-link" href="viewPublisher.php">View Publishers</a>
                     <a class="nav-link" href="#" tabindex="-1" aria-disabled="true"></a>
@@ -419,57 +419,72 @@
             <div class="col-md-10 content"> <!--<div class="col-md-10 col-sm-12 px-5"> -->
                 <div calss="ph-3"><a href="insertBook.php" class="btn btn-outline-dark">Add new Book</a></div>
 
-                <p >
-                        <?php 
+              <p>
+                <?php 
+                  if(isset($_SESSION['deleteSuccess'])){
+                  echo "<span class =  'alert alert-success'> $_SESSION[deleteSuccess]</span>"; 
+                  unset($_SESSION['deleteSuccess']);
+                  }
 
-                        if(isset($_SESSION['cloginSuccess'])){
-                            echo "<span class='w-screen alert alert-success'>$_SESSION[cloginSuccess]</span> " ; 
-                            unset($_SESSION['cloginSuccess']);
-                        }// if ends
+                  if(isset($_SESSION['insertSuccess'])){
+                  echo "<span class =  'alert alert-success'> $_SESSION[insertSuccess]</span>"; 
+                  unset($_SESSION['insertSuccess']);
+                  }
 
-                        if(isset($books)){
-                            echo "<div class=row>";
-                            foreach($books as $book){
+                  if(isset($_SESSION['updateBookSuccess'])){
+                  echo "<span class =  'alert alert-success'> $_SESSION[updateBookSuccess]</span>"; 
+                  unset($_SESSION['updateBookSuccess']);
+                  }
+            
+            
+                ?>
+                
+              </p>
 
-                                echo "<div class=col-lg-3 col-md-6 col-sm-12>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Price</th>
+                            <th>Year</th>
+                            <th>Author</th>
+                            <th>Publisher</th>
+                            <th>Category</th>
+                            <th>Quantity</th>
+                            <th>Coverpath</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                          if(isset(($books)))
+                          {
+                              foreach($books as $book)
+                              {
+                                  echo "<tr>
+                                    <td>$book[bookid]</td>
+                                    <td>$book[title]</td>
+                                    <td>$book[price]</td>
+                                    <td>$book[year]</td>
+                                    <td>$book[author]</td>
+                                    <td>$book[publisher]</td>
+                                    <td>$book[category]</td>
+                                    <td>$book[quantity]</td>
+                                    <td>$book[coverpath]</td>
 
-                                <div class=card>
-                                    <img src=$book[coverpath] class=img-fluid card-img-top>
-                                    <div class=card-title>
-                                        $book[title]
-                                    </div>
-
-                                    <div class=card-text>$book[price] &nbsp; </div>
-                                    <div class=card-text>$book[publisher]</div>
-
-                                    </div>
-
-                                    </div>
-                                
-                                
-                                
-                                
-                                "
-
-
-
-                                ?>
-
-                                
-                            
-
-
-                           <?php }
-
-                        }
-
-
-                        
+                                    <td><img src='$book[coverpath]' style ='width:60px; height:70px;'></td>
+                                    <td><a href='editBook.php?bid=$book[bookid]' class='btn btn-info'>Edit</a></td>
+                                    <td><a href='deletedBook.php?bid=$book[bookid]' class='btn btn-danger'>Delete</a></td>
+                                    
+                                    
+                                  </tr>";
+                              }
+                          }
                         ?>
 
-                    </p>
+                    </tbody>
 
-                
+                </table>
             </div>
 
         </div>

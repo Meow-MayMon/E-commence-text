@@ -72,8 +72,6 @@
         $filename = $_FILES['bookcover']['name'];
         // store images
         $uploadPath = "covers/".$filename; 
-        echo $book_id."<br>";
-
         //created sql statment
         echo "$book_id, $title, $price, $quantity, $year, $publisher, $category, $author, $filename <br>";
 
