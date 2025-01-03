@@ -211,6 +211,10 @@
                          
                          
                          <?php 
+                         if (isset($_SESSION['cart']))
+                         {
+                            echo "<a href=viewCart.php class='btn btn-outline-primary mx-4'><Cart</a>";
+                         }
                              
                              }
                          ?>
@@ -321,9 +325,8 @@ if(isset($books)){
                               $book[price] &nbsp; $book[publisher] &nbsp; $book[author]
                           </div>
 
-                          <a class=btn btn-outline-primary>Add to Card</a>
-                          <a class=card-link>More...</a>
-
+                          <div class=card-text>$$book[price] &nbsp; &nbsp;$book[publisher]</div>
+                        <a href='addCart.php?id=$book[bookid]' style=background:#32a4a8;>Add To Cart</a>
                       </div>
               </div>
           </div>
